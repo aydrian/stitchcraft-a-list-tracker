@@ -26,15 +26,14 @@ class App extends Component {
       'mongodb-atlas'
     )
 
-    let user
     if (this.client.auth.hasRedirectResult()) {
-      user = await this.client.auth.handleRedirectResult()
+      await this.client.auth.handleRedirectResult()
     }
 
     const isAuthed = this.client.auth.isLoggedIn
     if (isAuthed) {
-      user = this.client.auth.user
-      this.setState({ isAuthed, profile: user.profile })
+      const { profile } = this.client.auth.user
+      this.setState({ isAuthed, profile })
     }
   }
 
