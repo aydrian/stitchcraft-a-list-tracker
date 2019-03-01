@@ -7,6 +7,8 @@ import {
 } from 'mongodb-stitch-browser-sdk'
 
 import Login from './components/Login'
+import AddMovieForm from './components/AddMovieForm'
+import MovieList from './components/MovieList'
 
 class App extends Component {
   constructor(props) {
@@ -15,7 +17,8 @@ class App extends Component {
 
     this.state = {
       isAuthed: false,
-      profile: {}
+      profile: {},
+      movies: []
     }
   }
 
@@ -33,7 +36,8 @@ class App extends Component {
     const isAuthed = this.client.auth.isLoggedIn
     if (isAuthed) {
       const { profile } = this.client.auth.user
-      this.setState({ isAuthed, profile })
+      const movies = await this.getMovies()
+      this.setState({ isAuthed, profile, movies })
     }
   }
 
@@ -53,8 +57,46 @@ class App extends Component {
     this.setState({ isAuthed: false, profile: {} })
   }
 
+  addMovie = async ({ date, title, price }) => {
+    date = new Date(date)
+    price = parseFloat(price)
+    console.log({ date, title, price })
+
+    const addResult = this.mongodb
+      .db('a-list-tracker')
+      .collection('movies')
+      .insertOne({
+        date,
+        title,
+        price,
+        owner_id: this.client.auth.user.id
+      })
+
+    const movies = await this.getMovies()
+    this.setState({ movies })
+
+    return addResult
+  }
+
+  deleteMovie = async ({ _id }) => {
+    await this.mongodb
+      .db('a-list-tracker')
+      .collection('movies')
+      .deleteOne({ _id })
+    const movies = await this.getMovies()
+    this.setState({ movies })
+  }
+
+  getMovies = async () => {
+    return this.mongodb
+      .db('a-list-tracker')
+      .collection('movies')
+      .find()
+      .toArray()
+  }
+
   render() {
-    const { isAuthed, profile } = this.state
+    const { isAuthed, profile, movies } = this.state
     return (
       <Container style={{ marginTop: '1em' }}>
         <Header as="h1" textAlign="center">
@@ -76,6 +118,10 @@ class App extends Component {
                 onClick={this.logout}
               />
             </Menu>
+            <AddMovieForm handleAddMovie={this.addMovie} />
+            {movies.length && (
+              <MovieList movies={movies} handleMovieDelete={this.deleteMovie} />
+            )}
           </Container>
         ) : (
           <Login loginUser={this.login} />
