@@ -1,0 +1,10 @@
+{
+    "config_version": 20180301,
+    "name": "stitchcraft-a-list-tracker",
+    "location": "US-VA",
+    "deployment_model": "GLOBAL",
+    "security": {},
+    "hosting": {
+        "enabled": false
+    }
+}
