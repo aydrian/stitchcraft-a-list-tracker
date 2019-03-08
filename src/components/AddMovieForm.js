@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
-import { Form, Input } from 'semantic-ui-react'
+import { Segment, Form, Input } from 'semantic-ui-react'
+import { DateInput } from 'semantic-ui-calendar-react'
 
 class AddMovieForm extends Component {
   constructor(props) {
@@ -23,52 +24,51 @@ class AddMovieForm extends Component {
     const { handleAddMovie } = this.props
     const { date, title, price } = this.state
     return (
-      <Form
-        onSubmit={() => {
-          handleAddMovie(this.state).then(result => {
-            this.setState({
-              date: '',
-              title: '',
-              price: ''
+      <Segment>
+        <Form
+          onSubmit={() => {
+            handleAddMovie(this.state).then(result => {
+              this.setState({
+                date: '',
+                title: '',
+                price: ''
+              })
             })
-          })
-        }}
-      >
-        <Form.Group>
-          <Form.Field>
-            <label>Date</label>
-            <Input
-              name="date"
-              required
-              defaultValue={date}
-              onChange={this.handleChange}
-            />
-          </Form.Field>
-          <Form.Field>
-            <label>Title</label>
-            <Input
-              name="title"
-              required
-              defaultValue={title}
-              onChange={this.handleChange}
-            />
-          </Form.Field>
-          <Form.Field>
-            <label>Price</label>
-            <Input
-              name="price"
-              required
-              defaultValue={price}
-              onChange={this.handleChange}
-            />
-          </Form.Field>
-          <Form.Field>
-            <Form.Button type="submit" primary>
-              Add
-            </Form.Button>
-          </Form.Field>
-        </Form.Group>
-      </Form>
+          }}
+        >
+          <Form.Group>
+            <Form.Field width={3}>
+              <DateInput
+                placeholder="Date"
+                name="date"
+                required
+                dateFormat="MM/DD/YYYY"
+                value={date}
+                onChange={this.handleChange}
+              />
+            </Form.Field>
+            <Form.Field width={9}>
+              <Input
+                placeholder="Title"
+                name="title"
+                required
+                value={title}
+                onChange={this.handleChange}
+              />
+            </Form.Field>
+            <Form.Field width={2}>
+              <Input
+                placeholder="Price"
+                name="price"
+                required
+                value={price}
+                onChange={this.handleChange}
+              />
+            </Form.Field>
+            <Form.Button type="submit" primary width={2} fluid content="Add" />
+          </Form.Group>
+        </Form>
+      </Segment>
     )
   }
 }
